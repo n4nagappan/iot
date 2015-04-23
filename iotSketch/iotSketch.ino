@@ -20,7 +20,7 @@
 #include <LGPS.h>
 
 #define WIFI_AP "AndroidAP"
-#define WIFI_PASSWORD "nuscfast"
+#define WIFI_PASSWORD "mafj3221"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define SITE_URL "www.722b4490.ngrok.io"
 
@@ -103,6 +103,7 @@ void parseGPGGA(const char* GPGGAstr)
    *  *47          the checksum data, always begins with *
    */
   int tmp, hour, minute, second, num ;
+  char latDirection, longDirection;
   Serial.println(GPGGAstr);
   if(GPGGAstr[0] == '$')
   {
@@ -116,13 +117,17 @@ void parseGPGGA(const char* GPGGAstr)
     
     tmp = getComma(2, GPGGAstr);
     latitude = getDoubleNumber(&GPGGAstr[tmp]);
+    tmp = getComma(3, GPGGAstr);
+    latDirection = GPGGAstr[tmp];
     latno = latitude/100;
     latdegree = latitude - latno;
     tmp = getComma(4, GPGGAstr);
     longitude = getDoubleNumber(&GPGGAstr[tmp]);
+    tmp = getComma(5, GPGGAstr);
+    longDirection = GPGGAstr[tmp];
     longno = longitude/100;
     longdegree = longitude - longno;
-    sprintf(buff, "latitude = %10.4f, longitude = %10.4f", latitude, longitude);
+    sprintf(buff, "latitude = %10.4f%c, longitude = %10.4f%c", latitude, latDirection, longitude, longDirection);
     Serial.println(buff); 
     
     tmp = getComma(7, GPGGAstr);
