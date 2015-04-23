@@ -21,7 +21,7 @@
 #define WIFI_AP "AndroidAP"
 #define WIFI_PASSWORD "nuscfast"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "www.b4b0a9ed.ngrok.io"
+#define SITE_URL "www.722b4490.ngrok.io"
 
 LWiFiClient c;
 
@@ -53,7 +53,7 @@ void sendGpsData(){
 
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
-  c.println("GET http://b4b0a9ed.ngrok.io/gps?lat=1.299155&long=103.787679 HTTP/1.1");
+  c.println("GET http://722b4490.ngrok.io/gps?lat=1.299155&long=103.787679 HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
