@@ -20,7 +20,7 @@
 #include <LGPS.h>
 
 #define WIFI_AP "AndroidAP"
-#define WIFI_PASSWORD "mfaj3221"
+#define WIFI_PASSWORD "nuscfast"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define SITE_URL "www.722b4490.ngrok.io"
 
@@ -188,8 +188,10 @@ void sendGpsData(){
 
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
-  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
-  c.println("GET http://722b4490.ngrok.io/gps?lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5)+" HTTP/1.1");
+//  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
+  String gpsData = "lat="+doubleToString(latitude,5)+"&long="+doubleToString(longitude,5);
+  Serial.println(gpsData);
+  c.println("GET http://722b4490.ngrok.io/gps?"+gpsData+" HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
