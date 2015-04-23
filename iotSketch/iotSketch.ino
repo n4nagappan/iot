@@ -22,7 +22,7 @@
 #define WIFI_AP "AndroidAP"
 #define WIFI_PASSWORD "mafj3221"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "www.722b4490.ngrok.io"
+#define SITE_URL "www.fa9aa48d.ngrok.io"
 
 LWiFiClient c;
 
@@ -32,6 +32,7 @@ char buff[256];
 double latitude;
 double longitude;
 double latno, latdegree, longno, longdegree;
+char latDirection, longDirection;
 
 static unsigned char getComma(unsigned char num,const char *str)
 {
@@ -103,7 +104,6 @@ void parseGPGGA(const char* GPGGAstr)
    *  *47          the checksum data, always begins with *
    */
   int tmp, hour, minute, second, num ;
-  char latDirection, longDirection;
   Serial.println(GPGGAstr);
   if(GPGGAstr[0] == '$')
   {
@@ -194,9 +194,9 @@ void sendGpsData(){
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
 //  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
-  String gpsData = "lat="+doubleToString(latitude,5)+"&long="+doubleToString(longitude,5);
+  String gpsData = "lat="+doubleToString(latitude,5)+ latDirection + "&long=" + doubleToString(longitude,5) + longDirection;
   Serial.println(gpsData);
-  c.println("GET http://722b4490.ngrok.io/gps?"+gpsData+" HTTP/1.1");
+  c.println("GET http://fa9aa48d.ngrok.io/gps?"+gpsData+" HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
