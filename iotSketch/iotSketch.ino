@@ -26,10 +26,10 @@
 #include "I2Cdev.h"
 #include "MPU9250.h"
 
-#define WIFI_AP "AndroidAP"
-#define WIFI_PASSWORD "mafj3221"
+#define WIFI_AP "Elayabharath's iPhone"
+#define WIFI_PASSWORD "sayHi2eb"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "d8d888fe.ngrok.io"
+#define SITE_URL "nagappan.ngrok.io"
 
 LWiFiClient c;
 
@@ -191,17 +191,17 @@ void setup()
   
   Serial.begin(115200);
   
-  // /* IMU Setup */
-  // // join I2C bus (I2Cdev library doesn't do this automatically)
-  // Wire.begin();
+   /* IMU Setup */
+   // join I2C bus (I2Cdev library doesn't do this automatically)
+   Wire.begin();
 
-  // // initialize device
-  // Serial.println("Initializing I2C devices...");
-  // accelgyro.initialize();
+   // initialize device
+   Serial.println("Initializing I2C devices...");
+   accelgyro.initialize();
 
-  // // verify connection
-  // Serial.println("Testing device connections...");
-  // Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
+   // verify connection
+   Serial.println("Testing device connections...");
+   Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
  
   /*Power on GPS module*/
   LGPS.powerOn();
@@ -248,9 +248,9 @@ void sendGpsData(){
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
 //  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
-  String gpsData = "lat="+doubleToString(latitude,7)+ latDirection + "&long=" + doubleToString(longitude,7) + longDirection;
+  String gpsData = "lat="+doubleToString(latitude,5)+ latDirection + "&long=" + doubleToString(longitude,5) + longDirection;
   Serial.println(gpsData);
-  c.println("GET http://d8d888fe.ngrok.io/gps?" + gpsData + " HTTP/1.1");
+  c.println("GET http://nagappan.ngrok.io/gps?" + gpsData + " HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
@@ -297,9 +297,9 @@ void sendIMUData(){
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
 //  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
-  String imuData = "ax="+doubleToString(Axyz[0],3)+"&ay="+doubleToString(Axyz[1],3)+"&az="+doubleToString(Axyz[2],3);
+  String imuData = "ax="+doubleToString(Axyz[0],3)+"&ay="+doubleToString(Axyz[1],3)+"&az="+doubleToString(Axyz[2],3)+"&gx="+doubleToString(Gxyz[0],3)+"&gy="+doubleToString(Gxyz[1],3)+"&gz="+doubleToString(Gxyz[2],3);
   Serial.println(imuData);
-  c.println("GET http://d8d888fe.ngrok.io/imu?"+imuData+" HTTP/1.1");
+  c.println("GET http://nagappan.ngrok.io/imu?"+imuData+" HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
@@ -391,12 +391,10 @@ void loop()
   Serial.println((char*)info.GPGGA); 
   parseGPGGA((const char*)info.GPGGA);
   
-  // every 5 seconds
-  sendGpsData();
-  delay(5000);
-  
-  // getIMUData();
-  // sendIMUData();
+  sendGpsData();    
+  delay(100);
+  getIMUData();
+  sendIMUData();
 }
 
 void getHeading(void)
@@ -511,7 +509,8 @@ void getAccel_Data(void)
 
 void getGyro_Data(void)
 {
-  accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
+  //accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
+  accelgyro.getRotation(&gx, &gy, &gz);
   Gxyz[0] = (double) gx * 250 / 32768;//131 LSB(��/s)
   Gxyz[1] = (double) gy * 250 / 32768;
   Gxyz[2] = (double) gz * 250 / 32768;
