@@ -29,7 +29,7 @@
 #define WIFI_AP "AndroidAP"
 #define WIFI_PASSWORD "mafj3221"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
-#define SITE_URL "www.fa9aa48d.ngrok.io"
+#define SITE_URL "d8d888fe.ngrok.io"
 
 LWiFiClient c;
 
@@ -248,9 +248,9 @@ void sendGpsData(){
   // send HTTP request, ends with 2 CR/LF
   Serial.println("send HTTP GET request");
 //  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
-  String gpsData = "lat="+doubleToString(latitude,5)+ latDirection + "&long=" + doubleToString(longitude,5) + longDirection;
+  String gpsData = "lat="+doubleToString(latitude,7)+ latDirection + "&long=" + doubleToString(longitude,7) + longDirection;
   Serial.println(gpsData);
-  c.println("GET http://fa9aa48d.ngrok.io/gps?"+gpsData+" HTTP/1.1");
+  c.println("GET http://d8d888fe.ngrok.io/gps?" + gpsData + " HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
@@ -299,7 +299,7 @@ void sendIMUData(){
 //  Serial.println("lat="+doubleToString(latno,5)+"&long="+doubleToString(longno,5));
   String imuData = "ax="+doubleToString(Axyz[0],3)+"&ay="+doubleToString(Axyz[1],3)+"&az="+doubleToString(Axyz[2],3);
   Serial.println(imuData);
-  c.println("GET http://722b4490.ngrok.io/imu?"+imuData+" HTTP/1.1");
+  c.println("GET http://d8d888fe.ngrok.io/imu?"+imuData+" HTTP/1.1");
   c.println("Host: " SITE_URL);
   c.println("Connection: keep-alive");
   c.println();
