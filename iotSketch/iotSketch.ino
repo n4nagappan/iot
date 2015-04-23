@@ -20,7 +20,7 @@
 #include <LGPS.h>
 
 #define WIFI_AP "AndroidAP"
-#define WIFI_PASSWORD "nuscfast"
+#define WIFI_PASSWORD "mfaj3221"
 #define WIFI_AUTH LWIFI_WPA  // choose from LWIFI_OPEN, LWIFI_WPA, or LWIFI_WEP.
 #define SITE_URL "www.722b4490.ngrok.io"
 
