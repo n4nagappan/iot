@@ -80,6 +80,16 @@ volatile int mx_min =0;
 volatile int my_min =0;
 volatile int mz_min =0;
 
+/* TakeMeHome and DistressSignal Buttons*/
+// constants won't change. They're used here to
+// set pin numbers:
+const int homePin = 4;     // the number of the pushbutton pin
+const int distressPin = 2;     // the number of the pushbutton pin
+
+ // variables will change:
+int homeState = 0;         // variable for reading the pushbutton status
+int distressState = 0;         // variable for reading the pushbutton status
+
 static unsigned char getComma(unsigned char num,const char *str)
 {
   unsigned char i,j = 0;
@@ -191,18 +201,22 @@ void setup()
   
   Serial.begin(115200);
   
-   /* IMU Setup */
-   // join I2C bus (I2Cdev library doesn't do this automatically)
-   Wire.begin();
+  /* IMU Setup */
+  // join I2C bus (I2Cdev library doesn't do this automatically)
+  Wire.begin();
 
-   // initialize device
-   Serial.println("Initializing I2C devices...");
+  // initialize device
+  Serial.println("Initializing I2C devices...");
    accelgyro.initialize();
 
-   // verify connection
-   Serial.println("Testing device connections...");
-   Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
- 
+  // verify connection
+  Serial.println("Testing device connections...");
+  Serial.println(accelgyro.testConnection() ? "MPU9250 connection successful" : "MPU9250 connection failed");
+  
+  /*Initialize home and distress buttons*/
+  pinMode(homePin, INPUT);
+  pinMode(distressPin, INPUT);
+
   /*Power on GPS module*/
   LGPS.powerOn();
   Serial.println("LGPS Power on, and waiting ..."); 
@@ -395,7 +409,83 @@ void loop()
   delay(100);
   getIMUData();
   sendIMUData();
+
+  getButtonData();
 }
+
+void getButtonData()
+{
+  homeState = digitalRead(homePin);
+  distressState = digitalRead(distressPin);
+
+  // check if the pushbutton is pressed.
+  // if it is, the buttonState is HIGH:
+  if (homeState == HIGH) {
+    Serial.println("home on");
+    sendButtonData("home");
+  }
+  else {
+    Serial.println("home off");
+  }
+  
+  if (distressState == HIGH) {
+    Serial.println("distress on");
+    sendButtonData("distress");
+  }
+  else {
+        Serial.println("distress off");
+  }
+}
+
+void sendButtonData(String button){
+  // keep retrying until connected to website
+  Serial.println("Connecting to WebSite for "+button);
+  while (0 == c.connect(SITE_URL, 80))
+  {
+    Serial.println("Re-Connecting to WebSite");
+    delay(1000);
+  }
+
+  // send HTTP request, ends with 2 CR/LF
+  Serial.println("send HTTP GET "+button+" request");
+  // Serial.println(imuData);
+  c.println("GET http://nagappan.ngrok.io/" + button+"?a=123 HTTP/1.1");
+  Serial.print("URL:");
+  Serial.println("http://nagappan.ngrok.io/" + button+"?a=123");
+  c.println("Host: " SITE_URL);
+  c.println("Connection: keep-alive");
+  c.println();
+
+  // waiting for server response
+  Serial.println("waiting HTTP response:");
+  while (!c.available())
+  {
+    delay(100);
+  }
+  
+  // Read the data here
+  // Make sure we are connected, and dump the response content to Serial
+  while (c)
+  {
+    int v = c.read();
+    if (v != -1)
+    {
+      Serial.print((char)v);
+    }
+    else
+    {
+      Serial.println("no more content, disconnect");
+      c.stop();
+    }
+  }
+
+  if (!disconnectedMsg)
+  {
+    Serial.println("disconnected by server");
+    disconnectedMsg = true;
+  }
+}
+
 
 void getHeading(void)
 {
@@ -509,8 +599,8 @@ void getAccel_Data(void)
 
 void getGyro_Data(void)
 {
-  //accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
-  accelgyro.getRotation(&gx, &gy, &gz);
+  accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
+//  accelgyro.getRotation(&gx, &gy, &gz);
   Gxyz[0] = (double) gx * 250 / 32768;//131 LSB(��/s)
   Gxyz[1] = (double) gy * 250 / 32768;
   Gxyz[2] = (double) gz * 250 / 32768;
